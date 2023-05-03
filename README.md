@@ -1,3 +1,5 @@
+https://blog.csdn.net/yangbindxj/article/details/123262278
+
 **Hello，这里是爱 Coding，爱 Hiphop，爱喝点小酒的 AKA 柏炎。**
 
 **Kafka**是一个分布式的，支持多分区、多副本，基于 Zookeeper 的分布式消息流平台，它同时也是一款开源的**基于发布订阅模式的消息引擎系统**。

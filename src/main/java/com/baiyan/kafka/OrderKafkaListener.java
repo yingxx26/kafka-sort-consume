@@ -48,7 +48,7 @@ public class OrderKafkaListener extends AbstractConsumerSeekAware {
      * 初始化顺序消费池
      */
     @PostConstruct
-    public void init(){
+    public void init() {
         KafkaSortConsumerConfig<OrderDTO> config = new KafkaSortConsumerConfig<>();
         config.setBizName("order");
         config.setBizService(orderService::solveRetry);
@@ -57,25 +57,26 @@ public class OrderKafkaListener extends AbstractConsumerSeekAware {
     }
 
     @KafkaListener(topics = {"${kafka.order.topic}"}, containerFactory = "baiyanCommonFactory")
-    public void consumerMsg(List<ConsumerRecord<?, ?>> records, Acknowledgment ack){
-        if(records.isEmpty()){
+    public void consumerMsg(List<ConsumerRecord<?, ?>> records, Acknowledgment ack) {
+        if (records.isEmpty()) {
             return;
         }
 
-        records.forEach(consumerRecord->{
+        records.forEach(consumerRecord -> {
             OrderDTO order = GsonUtil.gsonToBean(consumerRecord.value().toString(), OrderDTO.class);
-            kafkaConsumerPool.submitTask(order.getId(),order);
+            kafkaConsumerPool.submitTask(order.getId(), order);
         });
 
         // 当线程池中任务处理完成的计数达到拉取到的记录数时提交
         // 注意这里如果存在部分业务阻塞时间很长，会导致位移提交不上去，务必做好一些熔断措施
-        while (true){
-           if(records.size() == kafkaConsumerPool.getPendingOffsets().get()){
-               ack.acknowledge();
-               log.info("offset提交：{}",records.get(records.size()-1).offset());
-               kafkaConsumerPool.getPendingOffsets().set(0L);
-               break;
-           }
+        while (true) {
+            if (records.size() == kafkaConsumerPool.getPendingOffsets().get()) {
+                ack.acknowledge();
+                long offset = records.get(records.size() - 1).offset();
+                log.info("offset提交：{}", offset);
+                kafkaConsumerPool.getPendingOffsets().set(0L);
+                break;
+            }
         }
     }
 
