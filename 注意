@@ -1,0 +1,6 @@
+https://blog.csdn.net/yangbindxj/article/details/123262278
+
+cmd 进入D:\kafka_2.13-2.5.1
+启动zookeeper   .\bin\windows\zookeeper-server-start.bat .\config\zookeeper.properties
+
+启动kafka       .\bin\windows\kafka-server-start.bat .\config\server.properties
